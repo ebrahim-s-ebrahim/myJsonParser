@@ -26,7 +26,7 @@ Parse a JSON string:
 
 ```csharp
 
-var json = @"{'name': 'John', 'age': 30}";
+var json = @"{"name": "John", "age": 30}";
 
 var parser = new JsonParser();
 
