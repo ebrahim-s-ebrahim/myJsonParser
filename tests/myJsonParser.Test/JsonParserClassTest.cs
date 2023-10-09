@@ -8,23 +8,16 @@ namespace myJsonParser.Test
 {
     public class JsonParserClassTest
     {
-        // Parsing a simple JSON object with one key-value pair
+        // Parse a simple JSON object with one key-value pair
         [Fact]
         public void test_parse_simple_object()
         {
             // Arrange
-            List<JsonToken> tokens = new List<JsonToken>
-            {
-                new JsonToken(JsonToken.TokenType.LeftCurlyBrace),
-                new JsonToken(JsonToken.TokenType.String, "key"),
-                new JsonToken(JsonToken.TokenType.Colon),
-                new JsonToken(JsonToken.TokenType.String, "value"),
-                new JsonToken(JsonToken.TokenType.RightCurlyBrace)
-            };
-            JsonParser parser = new JsonParser(tokens);
+            string json = "{\"key\": \"value\"}";
+            JsonParser parser = new JsonParser();
 
             // Act
-            var result = parser.Parse();
+            var result = parser.ParseJson(json);
 
             // Assert
             Assert.IsType<Dictionary<string, object>>(result);
@@ -33,83 +26,60 @@ namespace myJsonParser.Test
             Assert.Equal("value", obj["key"]);
         }
 
-        // Parsing a simple JSON array with one element
+        // Parse a simple JSON array with two elements
         [Fact]
         public void test_parse_simple_array()
         {
             // Arrange
-            List<JsonToken> tokens = new List<JsonToken>
-            {
-                new JsonToken(JsonToken.TokenType.LeftSquareBracket),
-                new JsonToken(JsonToken.TokenType.String, "element"),
-                new JsonToken(JsonToken.TokenType.RightSquareBracket)
-            };
-            JsonParser parser = new JsonParser(tokens);
+            string json = "[3, 2]";
+            JsonParser parser = new JsonParser();
 
             // Act
-            var result = parser.Parse();
+            var result = parser.ParseJson(json);
 
             // Assert
             Assert.IsType<List<object>>(result);
             var array = (List<object>)result;
-            Assert.Single(array);
-            Assert.Equal("element", array[0]);
+            Assert.Equal(2, array.Count);
+            Assert.Equal(3, array[0]);
+            Assert.Equal(2, array[1]);
         }
 
-        // Parsing a JSON object with nested objects and arrays
+        // Parse a JSON object with nested objects and arrays
         [Fact]
-        public void test_parse_nested_object()
+        public void test_parse_nested_object_and_array()
         {
             // Arrange
-            List<JsonToken> tokens = new List<JsonToken>
-            {
-                new JsonToken(JsonToken.TokenType.LeftCurlyBrace),
-                new JsonToken(JsonToken.TokenType.String, "key1"),
-                new JsonToken(JsonToken.TokenType.Colon),
-                new JsonToken(JsonToken.TokenType.LeftCurlyBrace),
-                new JsonToken(JsonToken.TokenType.String, "key2"),
-                new JsonToken(JsonToken.TokenType.Colon),
-                new JsonToken(JsonToken.TokenType.LeftSquareBracket),
-                new JsonToken(JsonToken.TokenType.String, "element1"),
-                new JsonToken(JsonToken.TokenType.Comma),
-                new JsonToken(JsonToken.TokenType.String, "element2"),
-                new JsonToken(JsonToken.TokenType.RightSquareBracket),
-                new JsonToken(JsonToken.TokenType.RightCurlyBrace),
-                new JsonToken(JsonToken.TokenType.RightCurlyBrace)
-            };
-            JsonParser parser = new JsonParser(tokens);
+            string json = "{\"key\": [3, {\"nested_key\": \"nested_value\"}]}";
+            JsonParser parser = new JsonParser();
 
             // Act
-            var result = parser.Parse();
+            var result = parser.ParseJson(json);
 
             // Assert
             Assert.IsType<Dictionary<string, object>>(result);
             var obj = (Dictionary<string, object>)result;
             Assert.Single(obj);
-            Assert.IsType<Dictionary<string, object>>(obj["key1"]);
-            var nestedObj = (Dictionary<string, object>)obj["key1"];
-            Assert.Single(nestedObj);
-            Assert.IsType<List<object>>(nestedObj["key2"]);
-            var array = (List<object>)nestedObj["key2"];
+            Assert.IsType<List<object>>(obj["key"]);
+            var array = (List<object>)obj["key"];
             Assert.Equal(2, array.Count);
-            Assert.Equal("element1", array[0]);
-            Assert.Equal("element2", array[1]);
+            Assert.Equal(3, array[0]);
+            Assert.IsType<Dictionary<string, object>>(array[1]);
+            var nestedObj = (Dictionary<string, object>)array[1];
+            Assert.Single(nestedObj);
+            Assert.Equal("nested_value", nestedObj["nested_key"]);
         }
 
-        // Parsing an empty JSON object
+        // Parse an empty JSON object
         [Fact]
         public void test_parse_empty_object()
         {
             // Arrange
-            List<JsonToken> tokens = new List<JsonToken>
-            {
-                new JsonToken(JsonToken.TokenType.LeftCurlyBrace),
-                new JsonToken(JsonToken.TokenType.RightCurlyBrace)
-            };
-            JsonParser parser = new JsonParser(tokens);
+            string json = "{}";
+            JsonParser parser = new JsonParser();
 
             // Act
-            var result = parser.Parse();
+            var result = parser.ParseJson(json);
 
             // Assert
             Assert.IsType<Dictionary<string, object>>(result);
@@ -117,20 +87,16 @@ namespace myJsonParser.Test
             Assert.Empty(obj);
         }
 
-        // Parsing an empty JSON array
+        // Parse an empty JSON array
         [Fact]
         public void test_parse_empty_array()
         {
             // Arrange
-            List<JsonToken> tokens = new List<JsonToken>
-            {
-                new JsonToken(JsonToken.TokenType.LeftSquareBracket),
-                new JsonToken(JsonToken.TokenType.RightSquareBracket)
-            };
-            JsonParser parser = new JsonParser(tokens);
+            string json = "[]";
+            JsonParser parser = new JsonParser();
 
             // Act
-            var result = parser.Parse();
+            var result = parser.ParseJson(json);
 
             // Assert
             Assert.IsType<List<object>>(result);
@@ -138,27 +104,16 @@ namespace myJsonParser.Test
             Assert.Empty(array);
         }
 
-        // Parsing a JSON object with duplicate keys
+        // Parse a JSON object with duplicate keys
         [Fact]
         public void test_parse_duplicate_keys()
         {
             // Arrange
-            List<JsonToken> tokens = new List<JsonToken>
-            {
-                new JsonToken(JsonToken.TokenType.LeftCurlyBrace),
-                new JsonToken(JsonToken.TokenType.String, "key"),
-                new JsonToken(JsonToken.TokenType.Colon),
-                new JsonToken(JsonToken.TokenType.String, "value1"),
-                new JsonToken(JsonToken.TokenType.Comma),
-                new JsonToken(JsonToken.TokenType.String, "key"),
-                new JsonToken(JsonToken.TokenType.Colon),
-                new JsonToken(JsonToken.TokenType.String, "value2"),
-                new JsonToken(JsonToken.TokenType.RightCurlyBrace)
-            };
-            JsonParser parser = new JsonParser(tokens);
+            string json = "{\"key\": \"value1\", \"key\": \"value2\"}";
+            JsonParser parser = new JsonParser();
 
-            // Act and Assert
-            Assert.Throws<InvalidOperationException>(() => parser.Parse());
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => parser.ParseJson(json));
         }
     }
 }
