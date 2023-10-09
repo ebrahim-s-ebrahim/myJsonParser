@@ -4,6 +4,11 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>myJSONParser</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Ebrahim</Authors>
+    <Description>a fast json parser</Description>
+    <PackageId>Simple.Json.Parser</PackageId>
   </PropertyGroup>
 
 </Project>

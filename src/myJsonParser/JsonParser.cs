@@ -7,14 +7,20 @@ public class JsonParser
     private List<JsonToken> tokens;
     private int currentTokenIndex;
 
-    public JsonParser(List<JsonToken> tokens)
+    public object ParseJson(string json)
+    {
+        // Lexing
+        var lexer = new JsonLexer(json);
+        var tokens = lexer.Tokenize();
+
+        // parsing the tokens
+        return Parse(tokens);
+    }
+    private object Parse(List<JsonToken> tokens)
     {
         this.tokens = tokens;
         this.currentTokenIndex = 0;
-    }
 
-    public object Parse()
-    {
         return ParseValue();
     }
 
@@ -29,7 +35,7 @@ public class JsonParser
                 return currentToken.Value;
             case JsonToken.TokenType.Number:
                 ConsumeToken();
-                return double.Parse(currentToken.Value);
+                return int.Parse(currentToken.Value);
             case JsonToken.TokenType.True:
                 ConsumeToken();
                 return true;
