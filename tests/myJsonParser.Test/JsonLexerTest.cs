@@ -1,4 +1,4 @@
-namespace myJsonParserTest
+namespace myJsonParser.Test
 {
     public class JsonLexerTest
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace myJsonParserTest
+namespace myJsonParser.Test
 {
     public class JsonParserClassTest
     {
