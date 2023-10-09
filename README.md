@@ -1,6 +1,6 @@
 # myJsonParser
 
-Simple.Json.Parser is a simple and fast JSON parser library for .NET.
+Simple.Json.Parser is a simple JSON parser library for .NET.
 
 ## Features
 
